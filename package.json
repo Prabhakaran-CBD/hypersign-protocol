@@ -1,0 +1,42 @@
+{
+  "name": "HIDVesting",
+  "version": "1.0.0",
+  "description": "Token contract for Hypersign Identity Token",
+  "main": "config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hypersign-protocol/hid"
+  },
+  "keywords": [
+    "HID",
+    "hyperign",
+    "ERC20",
+    "etherum",
+    "solidity",
+    "identity"
+  ],
+  "author": "Vishwas Anand Bhushan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hypersign-protocol/hid/issues"
+  },
+  "homepage": "https://github.com/hypersign-protocol/hid#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.4.0",
+    "@truffle/hdwallet-provider": "^1.4.0",
+    "bignumber.js": "^1.2.1",
+    "chai": "^4.3.4",
+    "chai-as-promised": "^7.1.1",
+    "chai-bn": "^0.2.2",
+    "dotenv": "^10.0.0",
+    "keccak": "^3.0.1",
+    "rlp": "^2.2.6",
+    "web3": "^1.4.0"
+  }
+}
