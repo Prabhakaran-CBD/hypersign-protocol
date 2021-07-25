@@ -29,4 +29,7 @@ module.exports = async (deployer) => {
     _payOutInterval, //intervals (in seconds) at which funds will be released
     _revocable, //revocable flag
   )
+  //transfer alloted tokens to the beneficiary
+  let instance = await HIDToken.deployed()
+  await instance.transfer(HIDVesting.address, 10000) // tansfer token to the beneficiary
 }
