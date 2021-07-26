@@ -4,10 +4,10 @@ is paired/similary with javascrip testing framework like mocha, but  with more c
 */
 //note - Its clean-room-test so the test state is not shared.
 //get the deployed contract instance
-//testing in ganache - workspace - late-babies
 const HIDVesting = artifacts.require('HIDVesting.sol')
 const HIDToken = artifacts.require('HIDToken.sol')
 
+//const { web3 } = require('../utils/getContractInstance')
 const chai = require('./setupChai')
 //get the expect function from the chai
 const expect = chai.expect
@@ -42,7 +42,7 @@ contract('HIDVesting', (accounts) => {
   //test case-2
   //testing the revoked flag(true/false) of the account and expecting defaule value as false ,
   //so if value is true for that account then its not eqaul
-  it('Revoke flag shoube be false for the account', async () => {
+  it('Revoke flag shoube be false for the account since its not revoked', async () => {
     //console.log('Beneficiary address-', beneficiary)
     let revokedFlag = await HIDVestingContract.revoked(beneficiary) //defualt value is false for this flag
     //console.log('Reovked Flag -', revokedFlag)
@@ -50,9 +50,9 @@ contract('HIDVesting', (accounts) => {
   })
 
   //test case -3
-  it('HID Token Verify', async () => {
+  it('hidToken address verify', async () => {
     const HIDToken = await HIDVestingContract.hidToken()
-    //console.log('HIDToken-', HIDToken)
+    //console.log('HIDVestingContract-', HIDTokenContract)
     expect(HIDToken).to.be.not.empty
   })
 
@@ -84,7 +84,9 @@ contract('HIDVesting', (accounts) => {
     let unixDate = new Date(vestingScheduleUnlockTime * 1000)
     //Derive the value that passed in the contract
     const startTime = Math.ceil((new Date().getTime() + 120000) / 1000)
-
+    //console.log('start time-', startTime)
+    //console.log('UnlockTime-', new Date(startTime * 1000).toLocaleDateString())
+    //console.log('blocTimeout-', web3.eth.block)
     expect(unixDate.toLocaleDateString()).to.be.a.bignumber.equal(
       new BN(new Date(startTime * 1000).toLocaleDateString()),
       'Failure Message : value is not eqaul',
@@ -92,14 +94,27 @@ contract('HIDVesting', (accounts) => {
   })
 
   //test case-6
-  //test the initial balance of the beneficiary it should be equal that paid at initially
-  it('Get Intial Balance of the beneficiary', async () => {
+  //test the initial/current balance of the contract it should be equal that paid
+  //at initially for beneficiary
+  it('Get Intial Balance of the beneficiary of the contract', async () => {
     //call the getBalance getter function from the contract
     const balance = await HIDVestingContract.getBalance()
     //console.log('Balance-', balance)
     expect(balance).to.be.a.bignumber.equal(
-      new BN(100000),
+      new BN(10000),
       'Failed : Value is not matched ',
+    )
+  })
+
+  //test case -8
+  //testing the released amount of the account
+  it('initial released amount of the address should be zero', async () => {
+    //call the released getter function from the contract to check the released amount for the given account
+    let releasedAmt = await HIDVestingContract.released(beneficiary)
+    //console.log('releasedAmt-', releasedAmt)
+    expect(releasedAmt).to.be.a.bignumber.equal(
+      new BN(0),
+      'Failed: value should not be zero',
     )
   })
 
@@ -111,23 +126,28 @@ contract('HIDVesting', (accounts) => {
         from: beneficiary,
         gas: 1000000,
       })
-      console.log('Released successfully!')
+        .then((res) => {
+          console.log('result', res.message)
+        })
+        .catch((err) => {
+          console.log('error message-', err.message)
+        })
     } catch (err) {
       console.log('error message-', err.message)
     }
 
-    expect(getVestedAmount).to.be.a.bignumber.equal(
-      new BN(0),
-      'Failure: Value is should not be zero',
-    )
+    // expect(getVestedAmount).to.be.a.bignumber.equal(
+    //   new BN(0),
+    //   'Failure: Value is should not be zero',
+    // )
   })
 
   //test case -8
   //testing the released amount of the account
-  it('Initial released amount of the address expect zero ', async () => {
+  it('released amount of the address', async () => {
     //call the released getter function from the contract to check the released amount for the given account
     let releasedAmt = await HIDVestingContract.released(beneficiary)
-    //console.log("releasedAmt-",releasedAmt);
+    console.log('releasedAmt-', releasedAmt)
     expect(releasedAmt).to.be.a.bignumber.not.equal(
       new BN(0),
       'Failed: value should not be zero',
